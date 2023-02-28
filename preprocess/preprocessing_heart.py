@@ -5,7 +5,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 
 from preprocess.preprocessing_adult import Mode
-from preprocessing_utils import KBinsDiscretizer_continuos, quantizePrior, quantizeLOS, get_decile_score_class
 
 
 def load_and_preprocess_heart(mode: Mode = Mode.TRAIN, path: str = "./datasets/heart") -> pd.DataFrame:

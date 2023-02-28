@@ -6,7 +6,7 @@ import numpy as np
 
 
 def clustering(df: pd.DataFrame, clustering_alg_name: str = "kmeans", clustering_parameters: Dict = None,
-               evaluation_alg_name: str = "precision") -> Tuple[Dict, float]:
+               evaluation_alg_name: str = "precision") -> Tuple[Dict, pd.DataFrame]:
     # cluster the df of true_class_name, do i need to copy?
     if clustering_parameters is None:
         raise ValueError("clustering parameters are not defined")
@@ -17,7 +17,8 @@ def clustering(df: pd.DataFrame, clustering_alg_name: str = "kmeans", clustering
     clustering_result, clusters = clustering_fnc(df.iloc[:, :-2], **clustering_parameters)
 
     # concatenate the predicted values and true values with the clustering results as concatenated_df
-    concatenated_df = pd.concat([df.iloc[:, -2:], pd.DataFrame(clustering_result)], axis=1)
+    df_with_clusters = pd.concat([df, pd.DataFrame(clustering_result)], axis=1, ignore_index=True)
+    concatenated_df = df_with_clusters.iloc[:, -3:]
 
     divergence_dict = {}
     eval_fnc = getattr(evaluation, evaluation_alg_name)
@@ -31,8 +32,10 @@ def clustering(df: pd.DataFrame, clustering_alg_name: str = "kmeans", clustering
         # get only the lines where the last column (the clustering result) is equal to the cluster
         y_values_of_cluster = concatenated_df[concatenated_df.iloc[:, -1] == cluster].iloc[:, :-1]
         # call evaluation alg of the subset with true and predicted values
-        divergence_dict[cluster] = evaluation_score - \
-                                   eval_fnc(y_values_of_cluster.iloc[:, 0].to_numpy(),
-                                            y_values_of_cluster.iloc[:, 1].to_numpy())
+        divergence_dict[cluster] = (evaluation_score - eval_fnc(y_values_of_cluster.iloc[:, 0].to_numpy(),
+                                                                y_values_of_cluster.iloc[:, 1].to_numpy()))
 
-    return divergence_dict, clustering_result
+    # drop second to last column (the output of the model)
+    df_with_clusters = df_with_clusters.drop(df_with_clusters.columns[-2], axis=1)
+
+    return divergence_dict, df_with_clusters

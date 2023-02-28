@@ -20,7 +20,7 @@ class FCmodel(nn.Module):
         x = torch.relu(self.fc3(x))
         self.embedding = x
         x = torch.sigmoid(self.fc4(x))
-        return x
+        return x.squeeze()
 
     def get_embedding(self):
         return self.embedding
@@ -38,12 +38,15 @@ def save_model(checkpoint_dir: Path, model: nn.Module, checkpoint_name: str) -> 
 
 
 def load_model(checkpoint_dir: Path, model: nn.Module) -> nn.Module:
+    if not checkpoint_dir.exists():
+        return model
     # check if there are any checkpoints in the directory
-    if not list(checkpoint_dir.glob('*.pth')):
+    models_path = list(checkpoint_dir.glob('*.pth'))
+    if not models_path:
         return model
 
-    latest_checkpoint = max(glob.glob(str(checkpoint_dir / '*.pth')),
-                            key=os.path.getctime)
+    # get the latest checkpoint by sorting the checkpoints by the number at the end of the file name
+    latest_checkpoint = sorted(models_path, key=lambda x: int(x.stem.split('_')[-1]))[-1]
 
     # print the latest checkpoint that was loaded
     print(f'Loading checkpoint {latest_checkpoint}')

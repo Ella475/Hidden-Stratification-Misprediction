@@ -1,7 +1,8 @@
 import numpy as np
+import torch
 
 
-# get features and labels
+@torch.no_grad()
 def get_clustering_data(model, dataloader):
     agg_inputs = []
     agg_outputs = []

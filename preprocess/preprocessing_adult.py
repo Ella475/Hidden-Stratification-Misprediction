@@ -4,7 +4,6 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from enum import Enum
 from pathlib import Path
 import os
-from preprocessing_utils import KBinsDiscretizer_continuos
 
 
 class Mode(Enum):
@@ -64,15 +63,14 @@ def load_and_preprocess_adult(mode: Mode = Mode.TRAIN, path: str = "./datasets/a
                     'race', 'sex', 'capital-gain', 'capital-loss', 'hours-per-week',
                     'native-country', 'income-per-year']
     if mode == Mode.TRAIN:
-        path = path + "_data.csv"
-    # Load train data
+        # Load train data
         dt = pd.read_csv(path, header=None, names=column_names,
-                        skipinitialspace=True, na_values='?')
+                         skipinitialspace=True, na_values='?')
     elif mode == Mode.TEST:
         path = path + "_test.csv"
-    # Load test data
+        # Load test data
         dt = pd.read_csv(path, header=0, names=column_names,
-                       skipinitialspace=True, na_values='?')
+                         skipinitialspace=True, na_values='?')
     else:
         raise ValueError('mode must be either train or test')
 
@@ -104,4 +102,3 @@ def load_and_preprocess_adult(mode: Mode = Mode.TRAIN, path: str = "./datasets/a
     dt.drop(columns=["native-country"], inplace=True)
 
     return dt_preprocessed
-

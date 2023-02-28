@@ -3,14 +3,10 @@ import numpy as np
 
 def get_num_of_rows_to_remove(div_results, train_clustering_result):
     # choose the largest division from the train_inputs_div_results dictionary
-    largest_division = max(div_results, key=div_results.get)
-
-    # get the indices of the largest division
-    largest_division_indices = train_clustering_result[largest_division]
+    largest_division_indices = max(div_results, key=div_results.get)
 
     #  get rows from clustering_result which equals largest_division_indices
-    inputs_with_largest_division_cluster = train_clustering_result.iloc[largest_division_indices]
-
+    inputs_with_largest_division_cluster = train_clustering_result[train_clustering_result.iloc[:, -1] == largest_division_indices]
     # get the number of columns in the inputs_with_largest_division_cluster
     num_of_rows = inputs_with_largest_division_cluster.shape[0]
 
