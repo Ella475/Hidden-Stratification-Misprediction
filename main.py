@@ -1,3 +1,4 @@
+import json
 from enum import Enum
 from pathlib import Path
 
@@ -36,29 +37,6 @@ def separate_classes(df):
     return df_0, df_1
 
 
-def draw_experiment_graphs(name, loss_list, acc_list, loss_cluster_list, acc_cluster_list, cluster_percentage_list):
-    cluster_percentage_list = [x * 100 for x in cluster_percentage_list]
-    # draw 4 subplots in one figure
-    fig, axs = plt.subplots(2, 2)
-    fig.suptitle(f"Experiment {name}")
-    axs[0, 0].plot(cluster_percentage_list, loss_list)
-    axs[0, 0].set_title("Loss")
-    axs[0, 1].plot(cluster_percentage_list, acc_list)
-    axs[0, 1].set_title("Accuracy")
-    axs[1, 0].plot(cluster_percentage_list, loss_cluster_list)
-    axs[1, 0].set_title("Loss cluster")
-    axs[1, 1].plot(cluster_percentage_list, acc_cluster_list)
-    axs[1, 1].set_title("Accuracy cluster")
-
-    axs[0, 0].set(xlabel="Cluster percentage", ylabel="Loss")
-    axs[0, 1].set(xlabel="Cluster percentage", ylabel="Accuracy")
-    axs[1, 0].set(xlabel="Cluster percentage", ylabel="Loss cluster")
-    axs[1, 1].set(xlabel="Cluster percentage", ylabel="Accuracy cluster")
-
-    plt.savefig(f"experiment_graphs_{name}.png")
-    plt.show()
-
-
 def experiment_cluster_balance(name, df_0, df_1):
     cluster_number = 1
     manager = ClusterManager(data=df_0, cluster_number=cluster_number, train_test_percentage=0.2)
@@ -80,18 +58,18 @@ def experiment_cluster_balance(name, df_0, df_1):
         train_data_1, test_data_1 = train_test_split(df_1, test_size=0.2, random_state=42)
 
         train_data = pd.concat([train_data_0, train_data_1], axis=0, ignore_index=True)
-        train(checkpoint_dir=f"./checkpoints/adult_{cluster_percentage}", dataset_name="adult",
+        train(checkpoint_dir=f"./checkpoints/{name}_{cluster_percentage}", dataset_name="adult",
               df_preprocessed=train_data)
 
         # test on the complete test set
-        test_loss, test_acc = test(checkpoint_dir=f"./checkpoints/adult_{cluster_percentage}",
+        test_loss, test_acc = test(checkpoint_dir=f"./checkpoints/{name}_{cluster_percentage}",
                                    test_data=test_data_0.iloc[:, :-1])
         test_loss_list.append(test_loss)
         test_acc_list.append(test_acc)
         print(f"cluster_percentage: {cluster_percentage}, test_loss: {test_loss}, test_acc: {test_acc}")
 
         test_data_cluster = test_data_0[test_data_0.iloc[:, -1] == cluster_number]
-        test_loss_cluster, test_acc_cluster = test(checkpoint_dir=f"./checkpoints/adult_{cluster_percentage}",
+        test_loss_cluster, test_acc_cluster = test(checkpoint_dir=f"./checkpoints/{name}_{cluster_percentage}",
                                                    test_data=test_data_cluster.iloc[:, :-1])
         test_loss_cluster_list.append(test_loss_cluster)
         test_acc_cluster_list.append(test_acc_cluster)
@@ -100,25 +78,34 @@ def experiment_cluster_balance(name, df_0, df_1):
 
         # test on the complete train set
         train_data_complete = manager.get_train_data_complete()
-        train_loss, train_acc = test(checkpoint_dir=f"./checkpoints/adult_{cluster_percentage}",
+        train_loss, train_acc = test(checkpoint_dir=f"./checkpoints/{name}_{cluster_percentage}",
                                      test_data=train_data_complete.iloc[:, :-1])
         train_loss_list.append(train_loss)
         train_acc_list.append(train_acc)
         print(f"cluster_percentage: {cluster_percentage}, train_loss: {train_loss}, train_acc: {train_acc}")
 
         train_data_cluster = train_data_complete[train_data_complete.iloc[:, -1] == cluster_number]
-        train_loss_cluster, train_acc_cluster = test(checkpoint_dir=f"./checkpoints/adult_{cluster_percentage}",
+        train_loss_cluster, train_acc_cluster = test(checkpoint_dir=f"./checkpoints/{name}_{cluster_percentage}",
                                                      test_data=train_data_cluster.iloc[:, :-1])
         train_loss_cluster_list.append(train_loss_cluster)
         train_acc_cluster_list.append(train_acc_cluster)
         print(f"cluster_percentage: {cluster_percentage}, train_loss_cluster: {train_loss_cluster}, "
               f"train_acc_cluster: {train_acc_cluster}")
 
-    draw_experiment_graphs(name + '_test', test_loss_list, test_acc_list, test_loss_cluster_list, test_acc_cluster_list,
-                           cluster_percentage_list)
+    # create dict for all the results
+    results_dict = {"test_loss": test_loss_list, "test_acc": test_acc_list,
+                    "test_loss_cluster": test_loss_cluster_list, "test_acc_cluster": test_acc_cluster_list,
+                    "train_loss": train_loss_list, "train_acc": train_acc_list,
+                    "train_loss_cluster": train_loss_cluster_list, "train_acc_cluster": train_acc_cluster_list,
+                    "cluster_percentage": cluster_percentage_list}
 
-    draw_experiment_graphs(name + '_train', train_loss_list, train_acc_list, train_loss_cluster_list, train_acc_cluster_list,
-                           cluster_percentage_list)
+    # change result dict to values to scalars from tensor
+    for key in results_dict.keys():
+        results_dict[key] = [float(value) for value in results_dict[key]]
+
+    # save results dict to json file
+    with open(f"results/experiment_{name}.json", "w") as f:
+        json.dump(results_dict, f)
 
 
 def main(name, input_mode=None):
