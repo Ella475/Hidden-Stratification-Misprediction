@@ -4,8 +4,7 @@ import os
 
 DATASET_DIR = os.path.join(".", "datasets")
 
-
-# COMPAS
+# Preprocess is based the paper:
 # https://github.com/fair-preprocessing/nips2017/blob/master/compas/code/Generate_Compas_Data.ipynb
 # Quantize priors count between 0, 1-3, and >3
 def quantizePrior(x):
@@ -157,12 +156,13 @@ def import_process_adult(discretize=False, bins=3, inputDir=DATASET_DIR):
 
     dt.rename(columns={"income-per-year": "class"}, inplace=True)
     dt["class"] = dt["class"].astype('str').replace({">50K.": ">50K", "<=50K.": "<=50K"})
+    dt["class"] = dt["class"].map({"<=50K": 0, ">50K": 1})
     dt.dropna(inplace=True)
     dt.reset_index(drop=True, inplace=True)
     if discretize:
         dt = KBinsDiscretizer_continuos(dt, bins=bins)
     dt.drop(columns=["native-country"], inplace=True)
-    return dt, {"N": "<=50K", "P": ">50K"}
+    return dt
 
 
 def import_process_compas2(discretize=False, risk_class=False, inputDir=DATASET_DIR):

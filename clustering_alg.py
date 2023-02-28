@@ -1,4 +1,3 @@
-import numpy as np
 from numpy import unique
 from sklearn.cluster import KMeans, DBSCAN, MeanShift, AffinityPropagation, Birch, OPTICS, AgglomerativeClustering
 from sklearn.mixture import GaussianMixture

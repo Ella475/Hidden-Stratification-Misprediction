@@ -1,19 +1,17 @@
+import pandas as pd
 import sklearn
-from sklearn.metrics import silhouette_score
+import torch
+import numpy as np
+from sklearn.metrics import silhouette_score, precision_score, recall_score
 
 
 # evaluate the quality of the clustering
-def clusteringEvaluation(x, y_pred):
+def clustering_evaluation(x: np.array, y_pred: np.array):
     return silhouette_score(x, y_pred)
 
-
-def precision(y_true, y_pred):
-    return sklearn.metrics.precision_score(y_true, y_pred)
-
-
-def recall_score(y_true, y_pred):
-    return sklearn.metrics.recall_score(y_true, y_pred)
+def precision(y_true: np.array, y_pred: np.array):
+    return precision_score(y_true, y_pred)
 
 
-# def divergence(func, set_y_true, set_y_pred, subset_y_true, subset_y_pred):
-#     return func(set_y_true, set_y_pred) - func(subset_y_true, subset_y_pred)
+def recall(y_true: np.array, y_pred: np.array):
+    return recall_score(y_true, y_pred)
