@@ -4,8 +4,9 @@ from sklearn.mixture import GaussianMixture
 
 
 def dbscan(data, eps=0.25, min_samples=9):
-    dbscan_model = DBSCAN(eps, min_samples)
-    dbscan_result = dbscan_model.predict(data)
+    dbscan_model = DBSCAN(eps=eps, min_samples=min_samples)
+    dbscan_result = dbscan_model.fit(data)
+    dbscan_result = dbscan_result.labels_
     return dbscan_result, unique(dbscan_result)
 
 

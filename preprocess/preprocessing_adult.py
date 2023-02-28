@@ -11,7 +11,7 @@ class Mode(Enum):
     TEST = 'test'
 
 
-def load_and_preprocess_adult(mode: Mode = Mode.TRAIN, path: str = "./datasets/adult") -> pd.DataFrame:
+def load_and_preprocess_adult(path: str = "./datasets/adult") -> pd.DataFrame:
     education_map = {
         '10th': 'Dropout', '11th': 'Dropout', '12th': 'Dropout', '1st-4th':
             'Dropout', '5th-6th': 'Dropout', '7th-8th': 'Dropout', '9th':
@@ -62,17 +62,9 @@ def load_and_preprocess_adult(mode: Mode = Mode.TRAIN, path: str = "./datasets/a
                     'education-num', 'marital-status', 'occupation', 'relationship',
                     'race', 'sex', 'capital-gain', 'capital-loss', 'hours-per-week',
                     'native-country', 'income-per-year']
-    if mode == Mode.TRAIN:
-        # Load train data
-        dt = pd.read_csv(path, header=None, names=column_names,
-                         skipinitialspace=True, na_values='?')
-    elif mode == Mode.TEST:
-        path = path + "_test.csv"
-        # Load test data
-        dt = pd.read_csv(path, header=0, names=column_names,
-                         skipinitialspace=True, na_values='?')
-    else:
-        raise ValueError('mode must be either train or test')
+
+    dt = pd.read_csv(path, header=None, names=column_names,
+                     skipinitialspace=True, na_values='?')
 
     dt["education"] = dt["education"].replace(education_map)
     dt.drop(columns=["education-num", "fnlwgt"], inplace=True)
@@ -90,7 +82,7 @@ def load_and_preprocess_adult(mode: Mode = Mode.TRAIN, path: str = "./datasets/a
                         'native-country']
     encoder = OneHotEncoder()
     encoded = encoder.fit_transform(dt[categorical_cols])
-    dt_encoded = pd.DataFrame(encoded.toarray(), columns=encoder.get_feature_names(categorical_cols))
+    dt_encoded = pd.DataFrame(encoded.toarray(), columns=encoder.get_feature_names_out(categorical_cols))
 
     numerical_cols = ['age', 'capital-gain', 'capital-loss', 'hours-per-week']
     scaler = StandardScaler()

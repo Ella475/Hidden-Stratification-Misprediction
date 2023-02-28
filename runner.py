@@ -9,7 +9,7 @@ from tqdm import tqdm
 from clustering.cluster_manager import ClusterManager
 from clustering.clustering_calc import clustering
 from clustering.clustering_utils import get_clustering_data
-from configs.expriment_config import Config, InputMode, DatasetNames, ClusteringMethods
+from configs.expriment_config import Config, InputMode, DatasetNames, ClusteringMethods, EvaluationMethods
 from utils.datasets import customDataset
 from training.model_managment import create_model, load_model
 from training.train_model import train
@@ -18,6 +18,7 @@ from training.test_model import test
 from utils.utils import pickle_save, json_save
 
 import warnings
+
 warnings.filterwarnings('ignore')
 
 
@@ -105,13 +106,16 @@ def experiment_cluster_balance(config: Config, df_0: pd.DataFrame, df_1: pd.Data
 
 def experiment_on_class(config: Config, df_0: pd.DataFrame, df_1: pd.DataFrame):
     # call clustering algorithm on the features and labels (train and test)
-    inputs_div_results, clustering_result_df = clustering(df_0, clustering_parameters={})
-    clustering_result_dict = {'df': clustering_result_df,
-                              'div_results': inputs_div_results}
+    inputs_div_results, clustering_result_df = clustering(df=df_0, clustering_parameters={},
+                                                          clustering_alg_name=config.clustering_method,
+                                                          evaluation_alg_name=config.eval_method)
 
     # save clustering results to pickle file
     results_path = config.results_dir
-    pickle_save(clustering_result_dict, str(results_path / 'clustering_results.pkl'))
+    # cast inputs_div_results keys to str to be able to save to json
+    inputs_div_results = {str(key): value for key, value in inputs_div_results.items()}
+    json_save(inputs_div_results, str(results_path / 'div_results.json'))
+    clustering_result_df.to_csv(str(results_path / 'df.csv'))
 
     # remove model output (last column) from df_1
     df_1 = df_1.iloc[:, :-1]
@@ -159,14 +163,16 @@ def run_exp(config: Config):
 
 
 if __name__ == '__main__':
-    input_mode = InputMode.INPUTS
+    input_mode = InputMode.FEATURES
     dataset_name = DatasetNames.ADULT
-    clustering_method = ClusteringMethods.DBSCAN
+    clustering_method = ClusteringMethods.KMEANS
+    eval_method = EvaluationMethods.PRECISION
 
-    experiment_name = f'exp_{dataset_name.value[0]}_{input_mode.value}_{clustering_method.value[0]}'
+    experiment_name = f'{dataset_name.value[0]}_{input_mode.value}_{clustering_method.value[0]}_{eval_method.value[0]}'
     print(f'Running experiment: {experiment_name}')
     config = Config(experiment_name=experiment_name,
                     input_mode=input_mode,
                     dataset_name=dataset_name,
-                    clustering_method=clustering_method)
+                    clustering_method=clustering_method,
+                    eval_method=eval_method)
     run_exp(config)

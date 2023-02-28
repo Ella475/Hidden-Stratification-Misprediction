@@ -5,7 +5,7 @@ import pandas as pd
 import torch
 from sklearn.model_selection import train_test_split
 
-from configs.expriment_config import Config, DatasetNames, InputMode, ClusteringMethods
+from configs.expriment_config import Config, DatasetNames, InputMode, ClusteringMethods, EvaluationMethods
 from training.model_managment import create_model, load_model, save_model
 
 
@@ -110,7 +110,7 @@ def train(checkpoint_dir, dataset_name,
 
 def main(dataset_name: DatasetNames):
     config = Config(experiment_name="----", dataset_name=dataset_name, input_mode=InputMode.INPUTS,
-                    clustering_method=ClusteringMethods.KMEANS)
+                    clustering_method=ClusteringMethods.KMEANS, eval_method=EvaluationMethods.ACCURACY)
     df = config.preprocess_func(path=config.dataset_path)
     train(checkpoint_dir=str(config.trained_model_checkpoint_dir), dataset_name=config.dataset_name.value[0],
           df_preprocessed=df, epochs=150, batch_size=1000, print_every=10,

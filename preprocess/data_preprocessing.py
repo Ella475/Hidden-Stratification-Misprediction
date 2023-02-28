@@ -143,7 +143,7 @@ def import_process_adult(discretize=False, bins=3, inputDir=DATASET_DIR):
                     'education-num', 'marital-status', 'occupation', 'relationship',
                     'race', 'sex', 'capital-gain', 'capital-loss', 'hours-per-week',
                     'native-country', 'income-per-year']
-    train = pd.read_csv(os.path.join(inputDir, "adult.data"), header=None, names=column_names,
+    train = pd.read_csv(os.path.join(inputDir, "adult.csv"), header=None, names=column_names,
                         skipinitialspace=True, na_values='?')
     test = pd.read_csv(os.path.join(inputDir, "adult.test"), header=0, names=column_names,
                        skipinitialspace=True, na_values='?')
@@ -259,7 +259,7 @@ def quantizeEdges(x, edges):
 
 
 def import_process_bank(bins=3, discretize=False, inputDir=DATASET_DIR):
-    dt = pd.read_csv(os.path.join(inputDir, "datasets_4471_6849_bank.csv"), sep=",")
+    dt = pd.read_csv(os.path.join(inputDir, "bank.csv"), sep=",")
     dt.drop(columns=["duration"], inplace=True)
     dt.rename(columns={"deposit": "class"}, inplace=True)
     if discretize:

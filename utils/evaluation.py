@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.metrics import silhouette_score, precision_score, recall_score
+from sklearn.metrics import silhouette_score, precision_score, recall_score, f1_score, accuracy_score
 
 
 # evaluate the quality of the clustering
@@ -13,3 +13,11 @@ def precision(y_true: np.array, y_pred: np.array):
 
 def recall(y_true: np.array, y_pred: np.array):
     return recall_score(y_true, y_pred)
+
+
+def f1(y_true: np.array, y_pred: np.array):
+    return f1_score(y_true, y_pred)
+
+
+def accuracy(y_true: np.array, y_pred: np.array):
+    return accuracy_score(y_true, y_pred)
