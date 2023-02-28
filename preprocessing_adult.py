@@ -6,6 +6,7 @@ from pathlib import Path
 import os
 from preprocessing_utils import KBinsDiscretizer_continuos
 
+
 class Mode(Enum):
     TRAIN = 'train'
     TEST = 'test'

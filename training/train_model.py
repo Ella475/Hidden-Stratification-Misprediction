@@ -6,12 +6,15 @@ from pathlib import Path
 
 from evaluation import precision, recall
 from model_managment import create_model, load_model, save_model
-from preprocessing_adult import load_and_preprocess_adult
+from preprocessing_adult import load_and_preprocess_adult, Mode
+from preprocess_choice import choose_preprocess_func
 
 
-def train_model(path="../datasets/credit", checkpoint_dir="./checkpoints/credit" ):
+def train_model(path="../datasets/adult", checkpoint_dir="./checkpoints/adult", dataset_name="adult"):
+    # choose preprocessing function
+    preprocessing_function = choose_preprocess_func(dataset_name)
     # Load and preprocess the dataset
-    df_preprocessed = load_and_preprocess_adult("../datasets/adult")
+    df_preprocessed = preprocessing_function(path=path, mode=Mode.TRAIN)
     # Split the dataset into training and testing sets
     train_data, test_data = train_test_split(df_preprocessed, test_size=0.2, random_state=42)
     # Define the dataloaders and training loop
@@ -26,7 +29,7 @@ def train_model(path="../datasets/credit", checkpoint_dir="./checkpoints/credit"
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     criterion = torch.nn.BCELoss()
 
-    checkpoints_dir = Path('./checkpoints/adult')
+    checkpoints_dir = Path(checkpoint_dir)
     model = load_model(checkpoints_dir, model)
 
     for epoch in range(100):
@@ -77,7 +80,7 @@ def train_model(path="../datasets/credit", checkpoint_dir="./checkpoints/credit"
 
         # Save the model every 10 epochs
         if epoch % 10 == 0 and epoch != 0:
-            save_model(checkpoints_dir, model, f'checkpoint_adult_{epoch}.pth')
+            save_model(checkpoints_dir, model, f'checkpoint_{dataset_name}_{epoch}.pth')
 
 
 if __name__ == '__main__':
