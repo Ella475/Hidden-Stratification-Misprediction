@@ -1,7 +1,7 @@
 import numpy as np
 import os
 
-DATASET_DIR = os.path.join(".", "datasets")
+DATASET_DIR = os.path.join("..", "datasets")
 
 def KBinsDiscretizer_continuos(dt, attributes=None, bins=3):
     attributes = dt.columns if attributes is None else attributes

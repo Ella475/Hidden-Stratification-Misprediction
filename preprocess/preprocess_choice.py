@@ -1,7 +1,3 @@
-import preprocessing_adult
-import preprocessing_credit
-
-
 def choose_preprocess_func(dataset_name: str):
     # add "preprocessing_" to the dataset name
     preprocessing_module_name = "preprocessing_" + dataset_name

@@ -6,7 +6,7 @@ import pandas as pd
 from clustering_calc import clustering
 from clustering_utils import get_clustering_data
 from datasets import customDataset
-from preprocessing_adult import load_and_preprocess_adult, Mode
+from preprocess.preprocessing_adult import load_and_preprocess_adult, Mode
 from training.model_managment import create_model, load_model
 from cluster_distrebution_modification import get_num_of_rows_to_remove, get_changed_datasets
 

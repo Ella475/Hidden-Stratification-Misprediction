@@ -6,8 +6,8 @@ from pathlib import Path
 
 from evaluation import precision, recall
 from model_managment import create_model, load_model, save_model
-from preprocessing_adult import load_and_preprocess_adult, Mode
-from preprocess_choice import choose_preprocess_func
+from preprocess.preprocessing_adult import Mode
+from preprocess.preprocess_choice import choose_preprocess_func
 
 
 def train_model(path="../datasets/adult", checkpoint_dir="./checkpoints/adult", dataset_name="adult"):

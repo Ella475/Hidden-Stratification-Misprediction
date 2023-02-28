@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import os
 
-DATASET_DIR = os.path.join(".", "datasets")
+DATASET_DIR = os.path.join("..", "datasets")
 
 # Preprocess is based the paper:
 # https://github.com/fair-preprocessing/nips2017/blob/master/compas/code/Generate_Compas_Data.ipynb
