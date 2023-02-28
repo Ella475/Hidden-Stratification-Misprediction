@@ -1,8 +1,7 @@
 import pandas as pd
-from typing import List, Dict, Tuple, Union
-import clustering_alg
-import evaluation
-import numpy as np
+from typing import Dict, Tuple
+import clustering.clustering_alg as clustering_alg
+from utils import evaluation
 
 
 def clustering(df: pd.DataFrame, clustering_alg_name: str = "kmeans", clustering_parameters: Dict = None,

@@ -1,17 +1,18 @@
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+from configs.expriment_config import Config
 import os
 import json
 
 mpl.use('TkAgg')
 
 
-def draw_experiment_graphs(name, results_dict):
+def draw_experiment_graphs(config: Config, results_dict: dict):
     cluster_percentage = [int(x * 100) for x in results_dict["cluster_percentage"]]
 
     # plot in 4 subplots
     fig, axs = plt.subplots(2, 2, figsize=(10, 10))
-    fig.suptitle(f"Experiment: {name}")
+    fig.suptitle(f"Experiment: {str(config.exp_name)}")
 
     # test loss
     axs[0, 0].plot(cluster_percentage, results_dict["test_loss"], label="test_loss")
@@ -45,14 +46,6 @@ def draw_experiment_graphs(name, results_dict):
     axs[1, 1].set_ylabel("Accuracy")
     axs[1, 1].legend()
 
-    plt.savefig(f"images/{name}.png")
+    plt.savefig(str(config.results_dir / 'graphs.png'))
+    plt.show()
 
-
-if __name__ == "__main__":
-    # loop over all json files in current directory
-    for file in os.listdir():
-        if file.endswith(".json"):
-            with open(file, "r") as f:
-                results_dict = json.load(f)
-                name = file.split(".")[0]
-                draw_experiment_graphs(name, results_dict)

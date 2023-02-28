@@ -1,7 +1,5 @@
 import numpy as np
-import os
 
-DATASET_DIR = os.path.join("..", "datasets")
 
 def KBinsDiscretizer_continuos(dt, attributes=None, bins=3):
     attributes = dt.columns if attributes is None else attributes
@@ -56,6 +54,7 @@ def discretize(dfI, bins=4, dataset_name=None, attributes=None, indexes_FP=None)
     else:
         X_discretized = KBinsDiscretizer_continuos(dfI, attributes, bins=bins)
     return X_discretized.loc[indexes_validation].reset_index(drop=True)
+
 
 def quantizePrior(x):
     if x <= 0:

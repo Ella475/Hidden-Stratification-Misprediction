@@ -3,11 +3,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import torch
-import torch.nn.functional as F
 from sklearn.model_selection import train_test_split
 
-from preprocess.preprocess_choice import choose_preprocess_func
-from preprocess.preprocessing_adult import Mode, load_and_preprocess_adult
+from configs.expriment_config import Config, DatasetNames, InputMode, ClusteringMethods
 from training.model_managment import create_model, load_model, save_model
 
 
@@ -22,31 +20,11 @@ def check_accuracy(preds, labels):
     return (preds == labels).float().mean()
 
 
-def test(checkpoint_dir, test_data, loss_func=torch.nn.BCELoss()):
-    test_x = test_data.iloc[:, :-1].values
-    test_y = test_data.iloc[:, -1].values
-    model = create_model(test_x.shape[1], 1)
-    checkpoints_dir = Path(checkpoint_dir)
-    model = load_model(checkpoints_dir, model)
-
-    test_x = torch.from_numpy(test_x).type(torch.FloatTensor)
-    test_y = torch.from_numpy(test_y).type(torch.FloatTensor)
-
-    test_preds = model(test_x)
-    test_loss = loss_func(test_preds, test_y)
-    test_acc = check_accuracy(test_preds, test_y)
-    return test_loss, test_acc
-
-
 def train(checkpoint_dir, dataset_name,
-          df_preprocessed: pd.DataFrame = None, epochs=150, batch_size=256, print_every=10,
+          df_preprocessed: pd.DataFrame = None, epochs=150, batch_size=256, print_every=10, verbose=True,
           loss_func=torch.nn.BCELoss(), lr_scheduler_patience=100, lr_scheduler_patience_factor=0.95):
     if df_preprocessed is None:
         raise Exception("No data was given to train on")
-    # else:
-    #     preprocessing_function = choose_preprocess_func(dataset_name)
-    #     # Load and preprocess the dataset
-    #     df_preprocessed = preprocessing_function(path=data_path, mode=Mode.TRAIN)
 
     # Split the dataset into training and testing sets
     train_data, val_data = train_test_split(df_preprocessed, test_size=0.2, random_state=42)
@@ -115,8 +93,9 @@ def train(checkpoint_dir, dataset_name,
                         save_model(checkpoints_dir, model, f'checkpoint_{dataset_name}_{epoch}.pth')
                         best_accuracy = history['val_acc'][-1]
 
-                print(f"Epoch: {i}, Iteration: {j}, Loss: {history['train_loss'][-1]:.3f}, "
-                      f"Accuracy: {history['train_acc'][-1]:.3f}, Validation Accuracy: {history['val_acc'][-1]:.3f}")
+                if verbose:
+                    print(f"Epoch: {i}, Iteration: {j}, Loss: {history['train_loss'][-1]:.3f}, "
+                          f"Accuracy: {history['train_acc'][-1]:.3f}, Validation Accuracy: {history['val_acc'][-1]:.3f}")
 
                 model.train()
 
@@ -129,9 +108,10 @@ def train(checkpoint_dir, dataset_name,
     return history
 
 
-if __name__ == '__main__':
-    df = load_and_preprocess_adult(path="../datasets/adult.data")
-    train(checkpoint_dir="./checkpoints/adult", dataset_name="adult", df_preprocessed=df,
-          epochs=150, batch_size=1000, print_every=10,
+def main(dataset_name: DatasetNames):
+    config = Config(experiment_name="----", dataset_name=dataset_name, input_mode=InputMode.INPUTS,
+                    clustering_method=ClusteringMethods.KMEANS)
+    df = config.preprocess_func(path=config.dataset_path)
+    train(checkpoint_dir=str(config.trained_model_checkpoint_dir), dataset_name=config.dataset_name.value[0],
+          df_preprocessed=df, epochs=150, batch_size=1000, print_every=10,
           loss_func=torch.nn.BCELoss(), lr_scheduler_patience=50, lr_scheduler_patience_factor=0.95)
-

@@ -48,9 +48,6 @@ def load_model(checkpoint_dir: Path, model: nn.Module) -> nn.Module:
     # get the latest checkpoint by sorting the checkpoints by the number at the end of the file name
     latest_checkpoint = sorted(models_path, key=lambda x: int(x.stem.split('_')[-1]))[-1]
 
-    # print the latest checkpoint that was loaded
-    print(f'Loading checkpoint {latest_checkpoint}')
-
     model.load_state_dict(torch.load(latest_checkpoint))
 
     return model

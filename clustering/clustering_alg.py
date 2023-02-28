@@ -15,7 +15,7 @@ def kmeans(data, n_clusters=5):
     return k_meansn_result, unique(k_meansn_result)
 
 
-def gaussianmixture(data, n_components=2):
+def gaussian_mixture(data, n_components=2):
     gaussian_model = GaussianMixture(n_components)
     gaussian_model.fit(data)
     gaussian_result = gaussian_model.predict(data)
@@ -29,18 +29,19 @@ def birch(data, threshold=0.03, n_clusters=2):
     return birch_result, unique(birch_result)
 
 
-def affinityPropagation(data, damping=0.7):
+def affinity_propagation(data, damping=0.7):
     affinity_propagation_model = AffinityPropagation(damping)
     affinity_propagation_model.fit(data)
     affinity_propagation_result = affinity_propagation_model.predict(data)
     return affinity_propagation_result, unique(affinity_propagation_result)
 
 
-def meanShift(data):
+def mean_shift(data):
     mean_shift_model = MeanShift()
     mean_shift_model.fit(data)
     mean_shift_result = mean_shift_model.predict(data)
     return mean_shift_result, unique(mean_shift_result)
+
 
 def optics(data, eps=0.75, min_samples=10):
     optics_model = OPTICS(eps, min_samples)
@@ -48,9 +49,9 @@ def optics(data, eps=0.75, min_samples=10):
     optics_result = optics_model.predict(data)
     return optics_result, unique(optics_result)
 
-def agglomerativeClustering(data, n_clusters=2):
+
+def agglomerative_clustering(data, n_clusters=2):
     agglomerative_clustering_model = AgglomerativeClustering(n_clusters)
     agglomerative_clustering_model.fit(data)
     agglomerative_clustering_result = agglomerative_clustering_model.predict(data)
     return agglomerative_clustering_result, unique(agglomerative_clustering_result)
-
