@@ -12,11 +12,11 @@ class ClusterManager:
         self.train_data, self.test_data = train_test_split(self.data, test_size=self.train_test_percentage,
                                                            random_state=42)
         # get all the rows of the cluster
-        self.cluster_data = self.train_data[self.data['cluster'] == self.cluster_number]
+        self.cluster_data = self.train_data[self.data.iloc[:, -1] == self.cluster_number]
         self.cluster_data_size = len(self.cluster_data)
 
         # get all the rest of the rows
-        self.rest_data = self.train_data[self.data['cluster'] != self.cluster_number]
+        self.rest_data = self.train_data[self.data.iloc[:, -1] != self.cluster_number]
         # sample random rows from the rest of the data to match the size of the cluster
         self.sub_data = self.rest_data.sample(n=self.cluster_data_size, random_state=42)
         # get the rest of the rows
@@ -28,14 +28,16 @@ class ClusterManager:
         # sample random rows from the sub_data to complete the cluster size
         sub_data = self.sub_data.sample(frac=1-cluster_percentage, random_state=42)
         # concat the sampled cluster data with the rest of the data
-        data = pd.concat([cluster_data, sub_data, self.rest_data])
+        data = pd.concat([cluster_data, sub_data, self.rest_data], axis=0, ignore_index=True)
         # shuffle the data
         data = data.sample(frac=1, random_state=42)
-        return data
+        # drop the last column (cluster number)
+        data = data.drop(data.columns[-1], axis=1)
+        return data.reset_index(drop=True)
 
     def get_train_data_complete(self):
-        return self.train_data
+        return self.train_data.reset_index(drop=True)
 
     def get_test_data(self):
-        return self.test_data
+        return self.test_data.reset_index(drop=True)
 

@@ -97,7 +97,7 @@ def load_and_preprocess_adult(mode: Mode = Mode.TRAIN, path: str = "./datasets/a
     scaled = scaler.fit_transform(dt[numerical_cols])
     dt_scaled = pd.DataFrame(scaled, columns=numerical_cols)
 
-    dt_preprocessed = pd.concat([dt_encoded, dt_scaled, dt["class"]], axis=1)
+    dt_preprocessed = pd.concat([dt_encoded, dt_scaled, dt["class"]], axis=1, ignore_index=True)
 
     dt.drop(columns=["native-country"], inplace=True)
 

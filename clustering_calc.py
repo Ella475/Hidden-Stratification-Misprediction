@@ -16,8 +16,9 @@ def clustering(df: pd.DataFrame, clustering_alg_name: str = "kmeans", clustering
     # take all columns of df except the last two (predicted values and true values) and call clustering algorithm
     clustering_result, clusters = clustering_fnc(df.iloc[:, :-2], **clustering_parameters)
 
+    clustering_result_df = pd.DataFrame(clustering_result)
     # concatenate the predicted values and true values with the clustering results as concatenated_df
-    df_with_clusters = pd.concat([df, pd.DataFrame(clustering_result)], axis=1, ignore_index=True)
+    df_with_clusters = pd.concat([df, clustering_result_df], axis=1, ignore_index=True)
     concatenated_df = df_with_clusters.iloc[:, -3:]
 
     divergence_dict = {}
