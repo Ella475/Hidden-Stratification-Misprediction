@@ -11,7 +11,7 @@ def plot_cluster_results(config: Config):
     results_df = pd.read_csv(results_csv, index_col=0, dtype=float)
 
     # plot the results
-    # plot_cluster_tsne(results_df, config)
+    plot_cluster_tsne(results_df, config)
 
     div_dict = json_load(results_dir / 'div_results.json')
     plot_cluster_sizes_and_divergence(results_df, div_dict, config)
