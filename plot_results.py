@@ -28,20 +28,23 @@ def plot_exp_results(config: Config):
 
 def plot_classes_exp_results(config: Config):
     config.set_main_class_num(0, exp_plot=True)
-    plot_exp_results(config)
+    if not config.stop_after_clustering:
+        plot_exp_results(config)
     plot_cluster_results(config)
     config.set_main_class_num(1, exp_plot=True)
-    plot_exp_results(config)
+    if not config.stop_after_clustering:
+        plot_exp_results(config)
     plot_cluster_results(config)
 
 
 if __name__ == '__main__':
     input_mode = InputMode.FEATURES
     dataset_name = DatasetNames.ADULT
-    clustering_method = ClusteringMethods.KMEANS
+    clustering_method = ClusteringMethods.DBSCAN
     eval_method = EvaluationMethods.PRECISION
+    stop_after_clustering = False
 
-    experiment_name = f'{dataset_name.value[0]}_{input_mode.value}_{clustering_method.value[0]}_{eval_method.value[0]}'
+    experiment_name = f'{dataset_name.value[0]}_{input_mode.value}_{clustering_method.value[0]}_{eval_method.value[0]}{"_only_cluster" if stop_after_clustering else ""}'
 
     print(f'Running plots for experiment: {experiment_name}')
     config = Config(experiment_name=experiment_name,

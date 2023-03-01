@@ -83,11 +83,15 @@ class Config:
         self.stop_after_clustering = stop_after_clustering
 
     def set_main_class_num(self, class_num: int, exp_plot: bool = False):
-        self.cluster_checkpoint_dir = Path(f'checkpoints/{self.exp_name}/{class_num}')
-        self.cluster_checkpoint_dir.mkdir(parents=True, exist_ok=exp_plot)
+        try:
+            self.cluster_checkpoint_dir = Path(f'checkpoints/{self.exp_name}/{class_num}')
+            self.cluster_checkpoint_dir.mkdir(parents=True, exist_ok=exp_plot)
 
-        self.results_dir = Path(f'results/{self.exp_name}/{class_num}')
-        self.results_dir.mkdir(parents=True, exist_ok=exp_plot)
+            self.results_dir = Path(f'results/{self.exp_name}/{class_num}')
+            self.results_dir.mkdir(parents=True, exist_ok=exp_plot)
+        except FileExistsError:
+            raise FileExistsError('Please choose a different experiment name. Experiment name must be unique.')
+
 
     def set_show_plots(self):
         self.show_plots = True

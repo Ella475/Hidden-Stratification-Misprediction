@@ -155,22 +155,10 @@ def run_exp(config: Config):
         raise ValueError('input_mode is not valid')
 
     df_0, df_1 = separate_classes(input_df)
-    try:
-        config.set_main_class_num(0)
-        experiment_on_class(config, df_0=df_0, df_1=df_1)
-        config.set_main_class_num(1)
-
-        experiment_on_class(config, df_0=df_1, df_1=df_0)
-    except Exception as e:
-        class_num = str(config.results_dir)[-1]
-        print(f'Error in experiment_on_class with class {class_num}: {e}')
-        # remove checkpoint dir and results dir for the experiment
-        checkpoint_dir = config.cluster_checkpoint_dir.parent
-        results_dir = config.results_dir.parent
-        if checkpoint_dir != Path('checkpoints'):
-            shutil.rmtree(checkpoint_dir)
-        if config.results_dir != Path('results'):
-            shutil.rmtree(results_dir)
+    config.set_main_class_num(0)
+    experiment_on_class(config, df_0=df_0, df_1=df_1)
+    config.set_main_class_num(1)
+    experiment_on_class(config, df_0=df_1, df_1=df_0)
 
 
 if __name__ == '__main__':
