@@ -111,6 +111,10 @@ def experiment_on_class(config: Config, df_0: pd.DataFrame, df_1: pd.DataFrame):
     json_save(inputs_div_results, str(results_path / 'div_results.json'))
     clustering_result_df.to_csv(str(results_path / 'df.csv'))
 
+    # stop here if only clustering results are needed
+    if config.stop_after_clustering:
+        return
+
     # remove model output (last column) from df_1
     df_1 = df_1.iloc[:, :-1]
 
@@ -161,12 +165,14 @@ if __name__ == '__main__':
     dataset_name = DatasetNames.ADULT
     clustering_method = ClusteringMethods.KMEANS
     eval_method = EvaluationMethods.PRECISION
+    stop_after_clustering = True
 
-    experiment_name = f'{dataset_name.value[0]}_{input_mode.value}_{clustering_method.value[0]}_{eval_method.value[0]}'
+    experiment_name = f'{dataset_name.value[0]}_{input_mode.value}_{clustering_method.value[0]}_{eval_method.value[0]}{"_only_cluster" if stop_after_clustering else ""}'
     print(f'Running experiment: {experiment_name}')
     config = Config(experiment_name=experiment_name,
                     input_mode=input_mode,
                     dataset_name=dataset_name,
                     clustering_method=clustering_method,
-                    eval_method=eval_method)
+                    eval_method=eval_method,
+                    stop_after_clustering=stop_after_clustering)
     run_exp(config)

@@ -60,7 +60,8 @@ class Config:
     clustering_method: str
 
     def __init__(self, experiment_name: str, input_mode: InputMode, dataset_name: DatasetNames,
-                 clustering_method: ClusteringMethods, eval_method: EvaluationMethods):
+                 clustering_method: ClusteringMethods, eval_method: EvaluationMethods,
+                 stop_after_clustering: bool = False):
         self.exp_name = experiment_name
         self.input_mode = input_mode
         self.dataset_name = dataset_name
@@ -79,6 +80,7 @@ class Config:
         self.results_dir.mkdir(parents=True, exist_ok=True)
 
         self.show_plots = False
+        self.stop_after_clustering = stop_after_clustering
 
     def set_main_class_num(self, class_num: int, exp_plot: bool = False):
         self.cluster_checkpoint_dir = Path(f'checkpoints/{self.exp_name}/{class_num}')
