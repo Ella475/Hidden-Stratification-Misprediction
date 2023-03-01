@@ -1,8 +1,8 @@
 import pandas as pd
 
-from configs.expriment_config import Config, InputMode, DatasetNames, ClusteringMethods, EvaluationMethods
+from configs.expriment_config import Config
 from utils.utils import json_load
-from utils.graphs import draw_experiment_graphs, plot_cluster_tsne, plot_cluster_sizes_and_divergence
+from plots.graphs import draw_experiment_graphs, plot_cluster_tsne, plot_cluster_sizes_and_divergence
 
 
 def plot_cluster_results(config: Config):
@@ -35,22 +35,3 @@ def plot_classes_exp_results(config: Config):
     if not config.stop_after_clustering:
         plot_exp_results(config)
     plot_cluster_results(config)
-
-
-if __name__ == '__main__':
-    input_mode = InputMode.FEATURES
-    dataset_name = DatasetNames.ADULT
-    clustering_method = ClusteringMethods.DBSCAN
-    eval_method = EvaluationMethods.PRECISION
-    stop_after_clustering = False
-
-    experiment_name = f'{dataset_name.get_value()}_{input_mode.get_value()}_{clustering_method.get_value()}_{eval_method.get_value()}{"_only_cluster" if stop_after_clustering else ""}'
-
-    print(f'Running plots for experiment: {experiment_name}')
-    config = Config(experiment_name=experiment_name,
-                    input_mode=input_mode,
-                    dataset_name=dataset_name,
-                    clustering_method=clustering_method,
-                    eval_method=eval_method)
-
-    plot_classes_exp_results(config)

@@ -1,7 +1,3 @@
-import json
-import shutil
-from pathlib import Path
-
 from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader
 import numpy as np
@@ -16,6 +12,7 @@ from utils.datasets import customDataset
 from training.model_managment import create_model, load_model
 from training.train_model import train
 from training.test_model import test
+from plots.plot_results import plot_exp_results
 
 from utils.utils import json_save, assert_data_is_finite_and_not_nan, choose_max_div_cluster
 
@@ -162,6 +159,9 @@ def run_exp(config: Config):
 
 
 if __name__ == '__main__':
+    run = True
+    plot = True
+
     input_mode = InputMode.FEATURES
     dataset_name = DatasetNames.ADULT
     clustering_method = ClusteringMethods.DBSCAN
@@ -176,4 +176,8 @@ if __name__ == '__main__':
                     clustering_method=clustering_method,
                     eval_method=eval_method,
                     stop_after_clustering=stop_after_clustering)
-    run_exp(config)
+
+    if run:
+        run_exp(config)
+    if plot:
+        plot_exp_results(config)
