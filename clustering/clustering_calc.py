@@ -25,8 +25,6 @@ def clustering(df: pd.DataFrame, clustering_alg_name: str = "kmeans", clustering
     # compute evaluation score for the whole set
     evaluation_score = eval_fnc(concatenated_df.iloc[:, 0].to_numpy(), concatenated_df.iloc[:, 1].to_numpy())
 
-    divergence_dict["all"] = evaluation_score
-
     for cluster in clusters:
         # get only certain cluster,
         # get only the lines where the last column (the clustering result) is equal to the cluster

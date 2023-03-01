@@ -1,4 +1,6 @@
 import json
+import shutil
+from pathlib import Path
 
 from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader
@@ -15,7 +17,7 @@ from training.model_managment import create_model, load_model
 from training.train_model import train
 from training.test_model import test
 
-from utils.utils import json_save, assert_data_is_finite_and_not_nan
+from utils.utils import json_save, assert_data_is_finite_and_not_nan, choose_max_div_cluster
 
 import warnings
 
@@ -31,8 +33,7 @@ def separate_classes(df):
     return df_0, df_1
 
 
-def experiment_cluster_balance(config: Config, df_0: pd.DataFrame, df_1: pd.DataFrame):
-    cluster_number = 1
+def experiment_cluster_balance(config: Config, df_0: pd.DataFrame, df_1: pd.DataFrame, cluster_number: int = 0):
     manager = ClusterManager(data=df_0, cluster_number=cluster_number, train_test_percentage=0.2)
 
     test_loss_list = []
@@ -100,15 +101,15 @@ def experiment_cluster_balance(config: Config, df_0: pd.DataFrame, df_1: pd.Data
 
 def experiment_on_class(config: Config, df_0: pd.DataFrame, df_1: pd.DataFrame):
     # call clustering algorithm on the features and labels (train and test)
-    inputs_div_results, clustering_result_df = clustering(df=df_0, clustering_parameters={},
+    div_results, clustering_result_df = clustering(df=df_0, clustering_parameters={},
                                                           clustering_alg_name=config.clustering_method,
                                                           evaluation_alg_name=config.eval_method)
 
     # save clustering results to pickle file
     results_path = config.results_dir
     # cast inputs_div_results keys to str to be able to save to json
-    inputs_div_results = {str(key): value for key, value in inputs_div_results.items()}
-    json_save(inputs_div_results, str(results_path / 'div_results.json'))
+    div_results = {str(key): value for key, value in div_results.items()}
+    json_save(div_results, str(results_path / 'div_results.json'))
     clustering_result_df.to_csv(str(results_path / 'df.csv'))
 
     # stop here if only clustering results are needed
@@ -118,7 +119,8 @@ def experiment_on_class(config: Config, df_0: pd.DataFrame, df_1: pd.DataFrame):
     # remove model output (last column) from df_1
     df_1 = df_1.iloc[:, :-1]
 
-    experiment_cluster_balance(config, clustering_result_df, df_1)
+    cluster_num = choose_max_div_cluster(div_results)
+    experiment_cluster_balance(config, clustering_result_df, df_1, cluster_number=cluster_num)
 
 
 def run_exp(config: Config):
@@ -153,19 +155,30 @@ def run_exp(config: Config):
         raise ValueError('input_mode is not valid')
 
     df_0, df_1 = separate_classes(input_df)
+    try:
+        config.set_main_class_num(0)
+        experiment_on_class(config, df_0=df_0, df_1=df_1)
+        config.set_main_class_num(1)
 
-    config.set_main_class_num(0)
-    experiment_on_class(config, df_0=df_0, df_1=df_1)
-    config.set_main_class_num(1)
-    experiment_on_class(config, df_0=df_1, df_1=df_0)
+        experiment_on_class(config, df_0=df_1, df_1=df_0)
+    except Exception as e:
+        class_num = str(config.results_dir)[-1]
+        print(f'Error in experiment_on_class with class {class_num}: {e}')
+        # remove checkpoint dir and results dir for the experiment
+        checkpoint_dir = config.cluster_checkpoint_dir.parent
+        results_dir = config.results_dir.parent
+        if checkpoint_dir != Path('checkpoints'):
+            shutil.rmtree(checkpoint_dir)
+        if config.results_dir != Path('results'):
+            shutil.rmtree(results_dir)
 
 
 if __name__ == '__main__':
     input_mode = InputMode.FEATURES
     dataset_name = DatasetNames.ADULT
-    clustering_method = ClusteringMethods.KMEANS
+    clustering_method = ClusteringMethods.DBSCAN
     eval_method = EvaluationMethods.PRECISION
-    stop_after_clustering = True
+    stop_after_clustering = False
 
     experiment_name = f'{dataset_name.value[0]}_{input_mode.value}_{clustering_method.value[0]}_{eval_method.value[0]}{"_only_cluster" if stop_after_clustering else ""}'
     print(f'Running experiment: {experiment_name}')
