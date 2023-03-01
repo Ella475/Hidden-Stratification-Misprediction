@@ -94,10 +94,6 @@ def plot_cluster_sizes_and_divergence(df, divergence_scores, config: Config):
         ax.scatter(size, divergence, color='blue')
         ax.annotate(str(int(cluster)), (size, divergence))
 
-    all_size = df.iloc[:, -1].value_counts().sum()
-    divergence = divergence_scores['all']
-    ax.scatter(all_size, divergence, color='red')
-    ax.annotate('all', (all_size, divergence))
     ax.set_xlabel('Cluster Size')
     ax.set_ylabel('Divergence Score')
 
