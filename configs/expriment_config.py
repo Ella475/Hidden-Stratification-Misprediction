@@ -29,11 +29,8 @@ class ClusteringMethods(Enum):
     KMEANS = 'kmeans',
     DBSCAN = 'dbscan',
     OPTICS = 'optics',
-    MEANSHIFT = 'mean_shift',
-    AFFINITYPROPAGATION = 'affinity_propagation',
     BIRCH = 'birch',
-    GAUSSIANMIXTURE = 'gaussian_mixture',
-    AGGLOMERATIVECLUSTERING = 'agglomerative_clustering'
+    GAUSSIANMIXTURE = 'gaussianmixture',
 
 
 class EvaluationMethods(Enum):
