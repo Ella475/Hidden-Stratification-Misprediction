@@ -87,6 +87,5 @@ class Config:
         self.results_dir = Path(f'results/{self.exp_name}/{class_num}')
         self.results_dir.mkdir(parents=True, exist_ok=exp_plot)
 
-
-    def set_show_plots(self, show_plots: bool):
-        self.show_plots = show_plots
+    def set_show_plots(self):
+        self.show_plots = True

@@ -1,19 +1,23 @@
 import pandas as pd
 
 from configs.expriment_config import Config, InputMode, DatasetNames, ClusteringMethods, EvaluationMethods
-from utils.utils import json_load, pickle_load
-from utils.graphs import draw_experiment_graphs, plot_cluster_tsne
+from utils.utils import json_load
+from utils.graphs import draw_experiment_graphs, plot_cluster_tsne, plot_cluster_sizes_and_divergence
 
-
-def plot_cluster_space_results(config: Config):
-    results_dir = config.results_dir
-    results_pickle = results_dir / 'df.csv'
-    results_df = pd.read_csv(results_pickle)
-
-    # plot the results
-    plot_cluster_tsne(results_df, config)
 
 def plot_cluster_results(config: Config):
+    results_dir = config.results_dir
+    results_csv = results_dir / 'df.csv'
+    results_df = pd.read_csv(results_csv, index_col=0, dtype=float)
+
+    # plot the results
+    # plot_cluster_tsne(results_df, config)
+
+    div_dict = json_load(results_dir / 'div_results.json')
+    plot_cluster_sizes_and_divergence(results_df, div_dict, config)
+
+
+def plot_exp_results(config: Config):
     results_dir = config.results_dir
     results_json = results_dir / 'experiment_cluster_balance.json'
     results_dict = json_load(results_json)
@@ -22,13 +26,13 @@ def plot_cluster_results(config: Config):
     draw_experiment_graphs(config, results_dict)
 
 
-def plot_classes_results(config: Config):
+def plot_classes_exp_results(config: Config):
     config.set_main_class_num(0, exp_plot=True)
+    plot_exp_results(config)
     plot_cluster_results(config)
-    plot_cluster_space_results(config)
     config.set_main_class_num(1, exp_plot=True)
+    plot_exp_results(config)
     plot_cluster_results(config)
-    plot_cluster_space_results(config)
 
 
 if __name__ == '__main__':
@@ -46,4 +50,4 @@ if __name__ == '__main__':
                     clustering_method=clustering_method,
                     eval_method=eval_method)
 
-    plot_classes_results(config)
+    plot_classes_exp_results(config)

@@ -1,8 +1,11 @@
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-from configs.expriment_config import Config
 import pandas as pd
-from sklearn.manifold import TSNE
+
+from utils.utils import assert_data_is_finite_and_not_nan
+from utils.dimention_reduction import reduce_dim
+from configs.expriment_config import Config
+
 
 import warnings
 
@@ -12,22 +15,18 @@ mpl.use('TkAgg')
 
 
 def plot_cluster_tsne(df: pd.DataFrame, config: Config):
-    # Remove last two columns from DataFrame and convert to numpy array
-    features = df.iloc[:, :-2].to_numpy()
+    clusters = df.iloc[:, -1].to_numpy()
+    features = df.iloc[:, 1:-2].to_numpy()
 
-    df['clusters'] = df.iloc[:, -1]
+    # Perform pca to reduce dimensionality to 25 components and then perform t-SNE to reduce to 2 components
+    lower_dim_features = reduce_dim(features, n_components=25)
 
-    # Perform t-SNE dimensionality reduction
-    tsne = TSNE(n_components=2, perplexity=30, random_state=42)
-    tsne_features = tsne.fit_transform(features)
-
-    # Add t-SNE coordinates to DataFrame
-    df['tsne_x'] = tsne_features[:, 0]
-    df['tsne_y'] = tsne_features[:, 1]
+    tsne_x = lower_dim_features[:, 0]
+    tsne_y = lower_dim_features[:, 1]
 
     # Create scatter plot of t-SNE representation with color-coded clusters and labels
     plt.figure(figsize=(10, 8))
-    plt.scatter(df['tsne_x'], df['tsne_y'], c=df['clusters'], cmap='rainbow')
+    plt.scatter(tsne_x, tsne_y, c=clusters, cmap='rainbow')
 
     plt.title('t-SNE Visualization of clustering space of experiment' + str(config.exp_name))
 
@@ -79,6 +78,32 @@ def draw_experiment_graphs(config: Config, results_dict: dict):
 
     class_num = str(config.results_dir)[-1]
     plt.savefig(f'results/imbalance_plot/{config.exp_name}_{class_num}.png')
+    if config.show_plots:
+        plt.show()
+
+
+def plot_cluster_sizes_and_divergence(df, divergence_scores, config: Config):
+    cluster_sizes = df.iloc[:, -1].value_counts()
+    clusters = cluster_sizes.index
+
+    fig, ax = plt.subplots()
+
+    for cluster in clusters:
+        size = cluster_sizes[cluster]
+        divergence = divergence_scores[str(int(cluster))]
+        ax.scatter(size, divergence, color='blue')
+        ax.annotate(str(int(cluster)), (size, divergence))
+
+    all_size = df.iloc[:, -1].value_counts().sum()
+    divergence = divergence_scores['all']
+    ax.scatter(all_size, divergence, color='red')
+    ax.annotate('all', (all_size, divergence))
+    ax.set_xlabel('Cluster Size')
+    ax.set_ylabel('Divergence Score')
+
+    class_num = str(config.results_dir)[-1]
+    plt.savefig(f'results/divergence_plot/{config.exp_name}_{class_num}.png')
+
     if config.show_plots:
         plt.show()
 

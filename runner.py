@@ -15,17 +15,11 @@ from training.model_managment import create_model, load_model
 from training.train_model import train
 from training.test_model import test
 
-from utils.utils import pickle_save, json_save
+from utils.utils import json_save, assert_data_is_finite_and_not_nan
 
 import warnings
 
 warnings.filterwarnings('ignore')
-
-
-def assert_data_is_finite_and_not_nan(data):
-    assert np.all(np.isfinite(data)), "Data contains NaN or infinite values"
-    assert not np.any(np.isnan(data)), "Data contains NaN or infinite values"
-    return True
 
 
 def separate_classes(df):
