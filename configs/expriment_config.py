@@ -7,9 +7,19 @@ from preprocess.preprocessing_heart import load_and_preprocess_heart
 from preprocess.preprocessing_bank import load_and_preprocess_bank
 
 
+def value_check(value):
+    if isinstance(value, tuple):
+        return value[0]
+    else:
+        return value
+
+
 class InputMode(Enum):
     FEATURES = 'features'
     INPUTS = 'inputs'
+
+    def get_value(self):
+        return value_check(super().value)
 
 
 class DatasetNames(Enum):
@@ -17,6 +27,9 @@ class DatasetNames(Enum):
     BANK = 'bank',
     CREDIT = 'credit',
     HEART = 'heart'
+
+    def get_value(self):
+        return value_check(super().value)
 
 
 dataset_path_dict = {DatasetNames.ADULT: 'datasets/adult.csv',
@@ -32,12 +45,18 @@ class ClusteringMethods(Enum):
     BIRCH = 'birch',
     GAUSSIANMIXTURE = 'gaussianmixture',
 
+    def get_value(self):
+        return value_check(super().value)
+
 
 class EvaluationMethods(Enum):
     PRECISION = 'precision',
     RECALL = 'recall',
     F1 = 'f1',
     ACCURACY = 'accuracy'
+
+    def get_value(self):
+        return value_check(super().value)
 
 
 preprocess_func_dict = {DatasetNames.ADULT: load_and_preprocess_adult,
@@ -63,10 +82,10 @@ class Config:
         self.input_mode = input_mode
         self.dataset_name = dataset_name
         self.dataset_path = dataset_path_dict[dataset_name]
-        self.clustering_method = clustering_method.value[0]
-        self.eval_method = eval_method.value[0]
+        self.clustering_method = clustering_method.get_value()
+        self.eval_method = eval_method.get_value()
 
-        self.trained_model_checkpoint_dir = Path(f'training/checkpoints/{self.dataset_name.value[0]}')
+        self.trained_model_checkpoint_dir = Path(f'training/checkpoints/{self.dataset_name.get_value()}')
         self.trained_model_checkpoint_dir.mkdir(parents=True, exist_ok=True)
 
         self.preprocess_func = choose_preprocess_func(dataset_name)

@@ -55,7 +55,7 @@ def experiment_cluster_balance(config: Config, df_0: pd.DataFrame, df_1: pd.Data
         # train on the train set
         train_data = pd.concat([train_data_0, train_data_1], axis=0, ignore_index=True)
         checkpoints_dir = str(config.cluster_checkpoint_dir / str(cluster_percentage))
-        train(checkpoint_dir=checkpoints_dir, dataset_name=config.dataset_name.value[0],
+        train(checkpoint_dir=checkpoints_dir, dataset_name=config.dataset_name.get_value(),
               df_preprocessed=train_data, verbose=False)
 
         # test on the complete test set
@@ -168,7 +168,7 @@ if __name__ == '__main__':
     eval_method = EvaluationMethods.PRECISION
     stop_after_clustering = False
 
-    experiment_name = f'{dataset_name.value[0]}_{input_mode.value}_{clustering_method.value[0]}_{eval_method.value[0]}{"_only_cluster" if stop_after_clustering else ""}'
+    experiment_name = f'{dataset_name.get_value()}_{input_mode.get_value()}_{clustering_method.get_value()}_{eval_method.get_value()}{"_only_cluster" if stop_after_clustering else ""}'
     print(f'Running experiment: {experiment_name}')
     config = Config(experiment_name=experiment_name,
                     input_mode=input_mode,

@@ -8,7 +8,7 @@ if __name__ == '__main__':
         eval_method = EvaluationMethods.PRECISION
         stop_after_clustering = True
 
-        experiment_name = f'{dataset_name.value[0]}_{input_mode.value}_{clustering_method.value[0]}_{eval_method.value[0]}{"_only_cluster" if stop_after_clustering else ""}'
+        experiment_name = f'{dataset_name.get_value()}_{input_mode.get_value()}_{clustering_method.get_value()}_{eval_method.get_value()}{"_only_cluster" if stop_after_clustering else ""}'
         print(f'Running experiment: {experiment_name}')
         config = Config(experiment_name=experiment_name,
                         input_mode=input_mode,

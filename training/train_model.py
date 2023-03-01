@@ -112,6 +112,6 @@ def main(dataset_name: DatasetNames):
     config = Config(experiment_name="----", dataset_name=dataset_name, input_mode=InputMode.INPUTS,
                     clustering_method=ClusteringMethods.KMEANS, eval_method=EvaluationMethods.ACCURACY)
     df = config.preprocess_func(path=config.dataset_path)
-    train(checkpoint_dir=str(config.trained_model_checkpoint_dir), dataset_name=config.dataset_name.value[0],
+    train(checkpoint_dir=str(config.trained_model_checkpoint_dir), dataset_name=config.dataset_name.get_value(),
           df_preprocessed=df, epochs=150, batch_size=1000, print_every=10,
           loss_func=torch.nn.BCELoss(), lr_scheduler_patience=50, lr_scheduler_patience_factor=0.95)
