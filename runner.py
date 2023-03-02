@@ -99,8 +99,8 @@ def experiment_cluster_balance(config: Config, df_0: pd.DataFrame, df_1: pd.Data
 def experiment_on_class(config: Config, df_0: pd.DataFrame, df_1: pd.DataFrame):
     # call clustering algorithm on the features and labels (train and test)
     div_results, clustering_result_df = clustering(df=df_0, clustering_parameters={},
-                                                          clustering_alg_name=config.clustering_method,
-                                                          evaluation_alg_name=config.eval_method)
+                                                   clustering_alg_name=config.clustering_method,
+                                                   evaluation_alg_name=config.eval_method)
 
     # save clustering results to pickle file
     results_path = config.results_dir

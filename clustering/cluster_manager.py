@@ -17,6 +17,12 @@ class ClusterManager:
 
         # get all the rest of the rows
         self.rest_data = self.train_data[self.data.iloc[:, -1] != self.cluster_number]
+        # check if the rest of the data is smaller than the cluster size
+        if len(self.rest_data) < self.cluster_data_size:
+            # if so, sample random rows from the cluster to match the size of the rest of the data
+            self.cluster_data = self.cluster_data.sample(n=len(self.rest_data), random_state=42)
+            self.cluster_data_size = len(self.cluster_data)
+
         # sample random rows from the rest of the data to match the size of the cluster
         self.sub_data = self.rest_data.sample(n=self.cluster_data_size, random_state=42)
         # get the rest of the rows
