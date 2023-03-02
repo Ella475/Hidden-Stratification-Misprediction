@@ -39,6 +39,19 @@ def get_plots_path(experiment_name: str, class_num: int) -> List[Path]:
     return png_paths
 
 
+def get_available_experiments() -> List[str]:
+    results_dir = Path('results')
+    experiment_names = [str(path.name) for path in results_dir.iterdir() if path.is_dir()]
+    # pop the plots dirs
+    experiment_names.remove('tsne')
+    experiment_names.remove('divergence_plot')
+    experiment_names.remove('imbalance_plot')
+    experiment_names.remove('----')
+
+    return experiment_names
+
+
+
 if __name__ == '__main__':
     class_num = 1
 
