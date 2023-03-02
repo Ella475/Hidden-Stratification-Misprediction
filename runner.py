@@ -12,7 +12,7 @@ from utils.datasets import customDataset
 from training.model_managment import create_model, load_model
 from training.train_model import train
 from training.test_model import test
-from plots.plot_results import plot_exp_results
+from plots.plot_results import plot_classes_exp_results
 
 from utils.utils import json_save, assert_data_is_finite_and_not_nan, choose_max_div_cluster
 
@@ -180,4 +180,4 @@ if __name__ == '__main__':
     if run:
         run_exp(config)
     if plot:
-        plot_exp_results(config)
+        plot_classes_exp_results(config)
