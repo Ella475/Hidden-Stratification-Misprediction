@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import matplotlib as mpl
 
-mpl.use('TkAgg')
+# mpl.use('TkAgg')
 
 from configs.expriment_config import DatasetNames, InputMode, ClusteringMethods, EvaluationMethods
 
@@ -29,7 +29,7 @@ def get_plots_path(experiment_name: str, class_num: int) -> List[Path]:
 
     if not tsne_path.exists() or not divergence_path.exists():
         print('There are no plots for this experiment')
-        exit(1)
+        return []
 
     png_paths = [tsne_path, divergence_path]
 

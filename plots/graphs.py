@@ -11,7 +11,7 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
-mpl.use('TkAgg')
+# mpl.use('TkAgg')
 
 
 def plot_cluster_tsne(df: pd.DataFrame, config: Config):
