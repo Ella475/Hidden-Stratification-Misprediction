@@ -29,14 +29,15 @@ pip install -r requirements_full.txt
 
 ## Usage
 
-There are 4 main scripts:
+There are 3 main scripts:
 
 1. `trainer.py` - trains a model on the dataset to use as feature extractor if needed.<br />
    The relevant checkpoints are saved in the `training/checkpoints` folder, so there is no need to run again unless you
    want to change the model.
 2. `runner.py` - Experiment runner - can run in two settings: <br />
-   (Both settings can run a new experiment and plot the results and save the plots, or use saved experiment results for
+   (Both settings can run a new experiment and save the plots, or use saved experiment results for
    plotting.)<br />
+   The plots are saved in the results folder, and not shown.
 
     1. `stop_after_clustering=True` - much faster and only performs the clustering on the data and saves the
        result.<br />
