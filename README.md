@@ -1,6 +1,6 @@
 # Tabular Data Science Project – Hidden Stratification Misprediction
 
-Ella Shalom, 208288423
+Ella Shalom
 
 ## Introduction
 
