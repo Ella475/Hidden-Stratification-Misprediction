@@ -23,9 +23,9 @@ def get_plots_path(experiment_name: str, class_num: int) -> List[Path]:
     divergence_dir = Path('results/divergence_plot')
     imbalance_dir = Path('results/imbalance_plot')
 
-    tsne_path = tsne_dir / f'{experiment_name}_{class_num}.png'
-    divergence_path = divergence_dir / f'{experiment_name}_{class_num}.png'
-    imbalance_path = imbalance_dir / f'{experiment_name}_{class_num}.png'
+    tsne_path = tsne_dir / f'{experiment_name}_{class_num}.svg'
+    divergence_path = divergence_dir / f'{experiment_name}_{class_num}.svg'
+    imbalance_path = imbalance_dir / f'{experiment_name}_{class_num}.svg'
 
     if not tsne_path.exists() or not divergence_path.exists():
         print('There are no plots for this experiment')

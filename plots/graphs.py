@@ -31,7 +31,7 @@ def plot_cluster_tsne(df: pd.DataFrame, config: Config):
     plt.title('t-SNE Visualization of clustering space of experiment' + str(config.exp_name))
 
     class_num = str(config.results_dir)[-1]
-    plt.savefig(f'results/tsne/{config.exp_name}_{class_num}.png')
+    plt.savefig(f'results/tsne/{config.exp_name}_{class_num}.svg')
 
     if config.show_plots:
         plt.show()
@@ -77,7 +77,7 @@ def draw_experiment_graphs(config: Config, results_dict: dict):
     axs[1, 1].legend()
 
     class_num = str(config.results_dir)[-1]
-    plt.savefig(f'results/imbalance_plot/{config.exp_name}_{class_num}.png')
+    plt.savefig(f'results/imbalance_plot/{config.exp_name}_{class_num}.svg')
     if config.show_plots:
         plt.show()
 
@@ -98,7 +98,7 @@ def plot_cluster_sizes_and_divergence(df, divergence_scores, config: Config):
     ax.set_ylabel('Divergence Score')
 
     class_num = str(config.results_dir)[-1]
-    plt.savefig(f'results/divergence_plot/{config.exp_name}_{class_num}.png')
+    plt.savefig(f'results/divergence_plot/{config.exp_name}_{class_num}.svg')
 
     if config.show_plots:
         plt.show()
