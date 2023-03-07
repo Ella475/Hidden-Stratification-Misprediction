@@ -22,7 +22,7 @@ warnings.filterwarnings('ignore')
 
 
 def separate_classes(df):
-    labels = df.iloc[:, -1]
+    labels = df.iloc[:, -2]
     df_0 = df[labels == 0]
     df_1 = df[labels == 1]
     df_0.reset_index(drop=True, inplace=True)
@@ -161,23 +161,25 @@ def run_exp(config: Config):
 if __name__ == '__main__':
     run = True
     plot = True
-
-    input_mode = InputMode.FEATURES
-    dataset_name = DatasetNames.ADULT
-    clustering_method = ClusteringMethods.DBSCAN
-    eval_method = EvaluationMethods.PRECISION
     stop_after_clustering = False
 
-    experiment_name = f'{dataset_name.get_value()}_{input_mode.get_value()}_{clustering_method.get_value()}_{eval_method.get_value()}{"_only_cluster" if stop_after_clustering else ""}'
-    print(f'Running experiment: {experiment_name}')
-    config = Config(experiment_name=experiment_name,
-                    input_mode=input_mode,
-                    dataset_name=dataset_name,
-                    clustering_method=clustering_method,
-                    eval_method=eval_method,
-                    stop_after_clustering=stop_after_clustering)
+    for dataset_name in DatasetNames:
+        for clustering_method in ClusteringMethods:
+            if clustering_method == ClusteringMethods.KMEANS:
+                continue
+            input_mode = InputMode.FEATURES
 
-    if run:
-        run_exp(config)
-    if plot:
-        plot_classes_exp_results(config)
+            experiment_name = f'{dataset_name.get_value()}_{input_mode.get_value()}_{clustering_method.get_value()}{"_only_cluster" if stop_after_clustering else ""}'
+            print(f'Running experiment: {experiment_name}')
+            config = Config(experiment_name=experiment_name,
+                            input_mode=input_mode,
+                            dataset_name=dataset_name,
+                            clustering_method=clustering_method,
+                            stop_after_clustering=stop_after_clustering)
+            try:
+                if run:
+                    run_exp(config)
+                if plot:
+                    plot_classes_exp_results(config)
+            except Exception as e:
+                print(f'Error: {e}')

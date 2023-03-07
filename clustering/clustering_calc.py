@@ -1,7 +1,7 @@
 import pandas as pd
 from typing import Dict, Tuple
 import clustering.clustering_alg as clustering_alg
-from utils import evaluation
+from utils.evaluation import accuracy
 
 
 def clustering(df: pd.DataFrame, clustering_alg_name: str = "kmeans", clustering_parameters: Dict = None,
@@ -21,7 +21,7 @@ def clustering(df: pd.DataFrame, clustering_alg_name: str = "kmeans", clustering
     concatenated_df = df_with_clusters.iloc[:, -3:]
 
     divergence_dict = {}
-    eval_fnc = getattr(evaluation, evaluation_alg_name)
+    eval_fnc = accuracy
     # compute evaluation score for the whole set
     evaluation_score = eval_fnc(concatenated_df.iloc[:, 0].to_numpy(), concatenated_df.iloc[:, 1].to_numpy())
 
@@ -30,7 +30,7 @@ def clustering(df: pd.DataFrame, clustering_alg_name: str = "kmeans", clustering
         # get only the lines where the last column (the clustering result) is equal to the cluster
         y_values_of_cluster = concatenated_df[concatenated_df.iloc[:, -1] == cluster].iloc[:, :-1]
         # call evaluation alg of the subset with true and predicted values
-        divergence_dict[cluster] = (evaluation_score - eval_fnc(y_values_of_cluster.iloc[:, 0].to_numpy(),
+        divergence_dict[cluster] = -(evaluation_score - eval_fnc(y_values_of_cluster.iloc[:, 0].to_numpy(),
                                                                 y_values_of_cluster.iloc[:, 1].to_numpy()))
 
     # drop second to last column (the output of the model)

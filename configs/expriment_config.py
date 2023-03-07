@@ -76,7 +76,7 @@ class Config:
     clustering_method: str
 
     def __init__(self, experiment_name: str, input_mode: InputMode, dataset_name: DatasetNames,
-                 clustering_method: ClusteringMethods, eval_method: EvaluationMethods,
+                 clustering_method: ClusteringMethods, eval_method: EvaluationMethods = EvaluationMethods.ACCURACY,
                  stop_after_clustering: bool = False):
         self.exp_name = experiment_name
         self.input_mode = input_mode
@@ -92,7 +92,7 @@ class Config:
 
         self.cluster_checkpoint_dir = Path(f'checkpoints/{experiment_name}')
         self.cluster_checkpoint_dir.mkdir(parents=True, exist_ok=True)
-        self.results_dir = Path(f'results/{experiment_name}')
+        self.results_dir = Path(f'results/experiments/{experiment_name}')
         self.results_dir.mkdir(parents=True, exist_ok=True)
 
         self.show_plots = False
@@ -101,10 +101,10 @@ class Config:
     def set_main_class_num(self, class_num: int, exp_plot: bool = False):
         try:
             self.cluster_checkpoint_dir = Path(f'checkpoints/{self.exp_name}/{class_num}')
-            self.cluster_checkpoint_dir.mkdir(parents=True, exist_ok=exp_plot)
+            self.cluster_checkpoint_dir.mkdir(parents=True, exist_ok=True)
 
-            self.results_dir = Path(f'results/{self.exp_name}/{class_num}')
-            self.results_dir.mkdir(parents=True, exist_ok=exp_plot)
+            self.results_dir = Path(f'results/experiments/{self.exp_name}/{class_num}')
+            self.results_dir.mkdir(parents=True, exist_ok=True)
         except FileExistsError:
             raise FileExistsError('Please choose a different experiment name. Experiment name must be unique.')
 
