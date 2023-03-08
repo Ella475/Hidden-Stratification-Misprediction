@@ -19,7 +19,7 @@ def plot_cluster_tsne(df: pd.DataFrame, config: Config):
     features = df.iloc[:, 1:-2].to_numpy()
 
     # Perform pca to reduce dimensionality to 25 components and then perform t-SNE to reduce to 2 components
-    lower_dim_features = reduce_dim(features, n_components=25)
+    lower_dim_features = reduce_dim(features, n_components=min(25, features.shape[1]))
 
     tsne_x = lower_dim_features[:, 0]
     tsne_y = lower_dim_features[:, 1]
@@ -29,7 +29,7 @@ def plot_cluster_tsne(df: pd.DataFrame, config: Config):
     plt.scatter(tsne_x, tsne_y, c=clusters, cmap='rainbow', rasterized=True)
 
     class_num = str(config.results_dir)[-1]
-    plt.savefig(f'results/plots/tsne/{config.exp_name}_{class_num}.svg')
+    plt.savefig(f'results/plots/tsne/{config.exp_name}_{class_num}.{config.plots_format}')
 
     if config.show_plots:
         plt.show()
@@ -74,7 +74,7 @@ def draw_experiment_graphs(config: Config, results_dict: dict):
     axs[1, 1].legend()
 
     class_num = str(config.results_dir)[-1]
-    plt.savefig(f'results/plots/imbalance_plot/{config.exp_name}_{class_num}.svg')
+    plt.savefig(f'results/plots/imbalance_plot/{config.exp_name}_{class_num}.{config.plots_format}')
     if config.show_plots:
         plt.show()
 
@@ -95,7 +95,7 @@ def plot_cluster_sizes_and_divergence(df, divergence_scores, config: Config):
     ax.set_ylabel('Divergence Score')
 
     class_num = str(config.results_dir)[-1]
-    plt.savefig(f'results/plots/divergence_plot/{config.exp_name}_{class_num}.svg')
+    plt.savefig(f'results/plots/divergence_plot/{config.exp_name}_{class_num}.{config.plots_format}')
 
     if config.show_plots:
         plt.show()

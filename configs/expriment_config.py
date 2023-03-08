@@ -97,6 +97,7 @@ class Config:
 
         self.show_plots = False
         self.stop_after_clustering = stop_after_clustering
+        self.plots_format = 'svg'
 
     def set_main_class_num(self, class_num: int, exp_plot: bool = False):
         try:
@@ -111,3 +112,6 @@ class Config:
 
     def set_show_plots(self):
         self.show_plots = True
+
+    def set_plots_format(self, format: str):
+        self.plots_format = format

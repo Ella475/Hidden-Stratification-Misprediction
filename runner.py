@@ -159,15 +159,15 @@ def run_exp(config: Config):
 
 
 if __name__ == '__main__':
-    run = True
+    run = False
     plot = True
     stop_after_clustering = False
 
     for dataset_name in DatasetNames:
         for clustering_method in ClusteringMethods:
+            input_mode = InputMode.FEATURES
             if clustering_method == ClusteringMethods.KMEANS:
                 continue
-            input_mode = InputMode.FEATURES
 
             experiment_name = f'{dataset_name.get_value()}_{input_mode.get_value()}_{clustering_method.get_value()}{"_only_cluster" if stop_after_clustering else ""}'
             print(f'Running experiment: {experiment_name}')
@@ -176,6 +176,8 @@ if __name__ == '__main__':
                             dataset_name=dataset_name,
                             clustering_method=clustering_method,
                             stop_after_clustering=stop_after_clustering)
+
+            config.set_plots_format('png')
             try:
                 if run:
                     run_exp(config)

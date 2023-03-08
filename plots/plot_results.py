@@ -26,7 +26,7 @@ def plot_exp_results(config: Config):
     draw_experiment_graphs(config, results_dict)
 
 
-def plot_classes_exp_results(config: Config):
+def plot_classes_exp_results(config: Config, ext: str = ''):
     config.set_main_class_num(0, exp_plot=True)
     if not config.stop_after_clustering:
         plot_exp_results(config)
