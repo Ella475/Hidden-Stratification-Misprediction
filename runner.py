@@ -164,10 +164,8 @@ if __name__ == '__main__':
     stop_after_clustering = False
 
     for dataset_name in DatasetNames:
-        for clustering_method in ClusteringMethods:
-            input_mode = InputMode.FEATURES
-            if clustering_method == ClusteringMethods.KMEANS:
-                continue
+        for input_mode in InputMode:
+            clustering_method = ClusteringMethods.KMEANS
 
             experiment_name = f'{dataset_name.get_value()}_{input_mode.get_value()}_{clustering_method.get_value()}{"_only_cluster" if stop_after_clustering else ""}'
             print(f'Running experiment: {experiment_name}')
