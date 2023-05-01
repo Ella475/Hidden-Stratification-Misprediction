@@ -8,6 +8,12 @@ Final project at Bar-Ilan University computer science department - Tabular Data 
 <br />The project is about hidden stratification misprediction and how to detect it. <br />The project is written in
 python.
 
+## Report
+
+The full project report is in the `report.pdf` file.
+
+## REsults
+![img_1.png](results_table.png)
 ## Installation
 
 1. Clone the repository
@@ -49,6 +55,5 @@ There are 3 main scripts:
 
 See the `example.ipynb` notebook for an example of how to run the project.
 
-## Report
 
-The full project report is in the `report.pdf` file.
+
